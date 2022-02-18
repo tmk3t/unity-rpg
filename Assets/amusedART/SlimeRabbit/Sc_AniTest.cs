@@ -6,13 +6,24 @@ public class Sc_AniTest : MonoBehaviour {
 
     Animator anim;
 
-	
+
 	void Start () {
 
         anim = GetComponent<Animator>();
-		
+
 	}
-	
+        private void Update()
+    {
+        if (Input.GetMouseButton(1))
+        {
+            // anim.SetTrigger("Idle");
+            // anim.SetTrigger("Move");
+            // anim.SetTrigger("Damage");
+            // anim.SetTrigger("Death");
+        }
+    }
+
+
     public void Idle_Ani()
     {
         anim.SetTrigger("Idle");
