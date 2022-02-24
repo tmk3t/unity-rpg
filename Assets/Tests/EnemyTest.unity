@@ -1013,5 +1013,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SlimeRabbit
       objectReference: {fileID: 0}
+    - target: {fileID: 8935038187247776188, guid: 37a6dafab2d534943a2e97dfb4dac5e3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 37a6dafab2d534943a2e97dfb4dac5e3, type: 3}
