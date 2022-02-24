@@ -1,34 +1,44 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+//HPのテキスト追加
 using UnityEngine.UI;
 
 public class SlimeRabbitController : MonoBehaviour
 {
     Animator animator;
-
+    //GetComponentせずアタッチする事も可能
     public Rigidbody rb;
+    //UnityEngine.UIがなければ使えない。HPのテキストを操作するために定義
     public Text hitPointText;
-    public Transform viewPoint;
 
+
+
+    //動くスピード
     public float moveSpeed = 0.1f;
-    public float rotationSpeed = 8f;
+    //HP
     public float hitPoint = 100f;
-
+    //動く向き
     private float moveDirection = 0f;
-
+    //死んだかどうか判定
     private bool isDead = false;
 
-
-
+    //カメラの位置をviewPointというObjectのTransformから取得
+    //スライムラビットが死んだ（Destroyされた）後、カメラが消えてしまうのを防ぐ（Destroyされないのでカメラは消えない）
+    public Transform viewPoint;
+    //カメラを取得
     private Camera playerCamera;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        //AnimatorをGetComponentする
         animator = GetComponent<Animator>();
+        //AnimatorのHitPointにHPを設定
         animator.SetFloat("HitPoint", hitPoint);
+        //カメラを取得
         playerCamera = Camera.main;
     }
 
@@ -37,17 +47,20 @@ public class SlimeRabbitController : MonoBehaviour
     void Update()
     {
         CameraUpdate();
-
+        //デフォルトのアニメーションを設定
         animator.SetBool("Move", false);
+        //アニメーターのパラメーターがHPに一致するように
         animator.SetFloat("HitPoint", hitPoint);
+        //テキストのHPの数値を更新
         hitPointText.text = "HP: " + animator.GetFloat("HitPoint");
 
+        //死んでいたら動けなくする
         if (isDead != true)
         {
             Move();
         }
 
-
+        //HPが0以下になったら死ぬ
         if (animator.GetFloat("HitPoint") <= 0f)
         {
             animator.SetTrigger("Death");
@@ -55,14 +68,14 @@ public class SlimeRabbitController : MonoBehaviour
         }
 
     }
-
+    //カメラの位置と角度をアップデートする
     void CameraUpdate()
     {
         playerCamera.transform.position = viewPoint.position;
         playerCamera.transform.rotation = viewPoint.rotation;
     }
 
-
+    //動きをまとめた関数
     void Move()
     {
         if (Input.GetKey(KeyCode.UpArrow))
@@ -73,6 +86,7 @@ public class SlimeRabbitController : MonoBehaviour
         if (Input.GetKey(KeyCode.DownArrow))
         {
             animator.SetBool("Move", true);
+            //マイナス1をかけて後ろに進む
             transform.position = transform.position + transform.forward * moveSpeed * -1;
         }
 
@@ -90,15 +104,23 @@ public class SlimeRabbitController : MonoBehaviour
         {
             moveDirection = 0f;
         }
-        transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + moveDirection, transform.rotation.eulerAngles.z);
+        //XとZの向きは変えず、YだけをMoveDirection分動かす。
+        transform.rotation = Quaternion.Euler(
+            transform.rotation.eulerAngles.x,
+            transform.rotation.eulerAngles.y + moveDirection,
+            transform.rotation.eulerAngles.z
+            );
 
     }
     private void OnCollisionEnter(Collision collision)
     {
+        //Damageを与える物体に衝突したら
         if (collision.gameObject.tag == "DamageObject")
         {
             animator.SetBool("Damage", true);
+            //HPを減らす。なお50という数値は適当なので、Bulletなど個別に設定した数値を取得してHPを減らすのも良いかもしれない
             hitPoint -= 50f;
+            //今回のBulletはぶつかった後はDestroyしておく
             Destroy(collision.gameObject);
         }
     }
