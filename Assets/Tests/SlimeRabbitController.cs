@@ -24,8 +24,6 @@ public class SlimeRabbitController : MonoBehaviour
     //ジャンプ力
     public float jumpPower = 10f;
 
-    private Vector3 move;
-
 
     //地面接触判定
     private bool isGrounded = false;
@@ -63,6 +61,8 @@ public class SlimeRabbitController : MonoBehaviour
         LateUpdate();
         //デフォルトのアニメーションを設定
         animator.SetBool("Move", false);
+        animator.SetBool("Jump", false);
+
         //アニメーターのパラメーターがHPに一致するように
         animator.SetFloat("HitPoint", hitPoint);
         //テキストのHPの数値を更新
@@ -128,18 +128,20 @@ public class SlimeRabbitController : MonoBehaviour
         isGrounded = Physics.Raycast(groundPoint.position, Vector3.down, .25f, groundLayers);
         if (isGrounded == true)
         {
-            move.y = transform.position.y;
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 animator.SetBool("Jump", true);
-                move.y = jumpPower;
+                rb.AddForce(transform.up * jumpPower, ForceMode.VelocityChange);
             }
         }
         else
         {
-            move.y += Physics.gravity.y * Time.deltaTime * 10;
+            transform.position = new Vector3(
+                transform.position.x,
+                transform.position.y + Physics.gravity.y * Time.deltaTime,
+                transform.position.z
+                );
         }
-        transform.position = move;
 
     }
 
