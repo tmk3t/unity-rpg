@@ -21,6 +21,20 @@ public class SlimeRabbitController : MonoBehaviour
     public float hitPoint = 100f;
     //動く向き
     private float moveDirection = 0f;
+    //ジャンプ力
+    public float jumpPower = 10f;
+
+    private Vector3 move;
+
+
+    //地面接触判定
+    private bool isGrounded = false;
+    //地面の位置
+    public Transform groundPoint;
+    //地面のLayer
+    public LayerMask groundLayers;
+
+
     //死んだかどうか判定
     private bool isDead = false;
 
@@ -46,7 +60,7 @@ public class SlimeRabbitController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CameraUpdate();
+        LateUpdate();
         //デフォルトのアニメーションを設定
         animator.SetBool("Move", false);
         //アニメーターのパラメーターがHPに一致するように
@@ -69,7 +83,7 @@ public class SlimeRabbitController : MonoBehaviour
 
     }
     //カメラの位置と角度をアップデートする
-    void CameraUpdate()
+    private void LateUpdate()
     {
         playerCamera.transform.position = viewPoint.position;
         playerCamera.transform.rotation = viewPoint.rotation;
@@ -111,7 +125,24 @@ public class SlimeRabbitController : MonoBehaviour
             transform.rotation.eulerAngles.z
             );
 
+        isGrounded = Physics.Raycast(groundPoint.position, Vector3.down, .25f, groundLayers);
+        if (isGrounded == true)
+        {
+            move.y = transform.position.y;
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                animator.SetBool("Jump", true);
+                move.y = jumpPower;
+            }
+        }
+        else
+        {
+            move.y += Physics.gravity.y * Time.deltaTime * 10;
+        }
+        transform.position = move;
+
     }
+
     private void OnCollisionEnter(Collision collision)
     {
         //Damageを与える物体に衝突したら

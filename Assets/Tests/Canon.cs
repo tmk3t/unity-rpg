@@ -12,7 +12,7 @@ public class Canon : MonoBehaviour
     public GameObject target = null;
 
     public GameObject bulletPrefab = null;
-    public float shootPower = 300f;
+    public float shootPower = 1000f;
     // Start is called before the first frame update
     void Start()
     {

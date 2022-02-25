@@ -21,6 +21,7 @@ public class SlimeRabbitPose : StateMachineBehaviour
     {
         animator.SetBool("Move", false);
         animator.SetBool("Damage", false);
+        animator.SetBool("Jump", false);
     }
 
     // OnStateMove is called right after Animator.OnAnimatorMove()
